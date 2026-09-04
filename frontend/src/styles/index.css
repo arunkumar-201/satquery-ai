@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #0c1d30;
+    --bg-secondary: #102a43;
+    --bg-tertiary: #1a3a5c;
+    --text-primary: #f0f4f8;
+    --text-secondary: #bcccdc;
+    --text-muted: #829ab1;
+    --border-color: #243b53;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+  }
+
+  .light {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-tertiary: #e2e8f0;
+    --text-primary: #0c1d30;
+    --text-secondary: #334e68;
+    --text-muted: #627d98;
+    --border-color: #cbd5e1;
+  }
+
+  * {
+    @apply border-space-700;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-space-950 text-space-50 font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-accent-cyan/30 text-white;
+  }
+
+  /* Leaflet overrides */
+  .leaflet-container {
+    @apply bg-space-900;
+    font-family: inherit;
+  }
+
+  .leaflet-pane {
+    @apply transition-opacity duration-200;
+  }
+
+  .leaflet-tile {
+    @apply transition-opacity duration-300;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-space-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-space-600 rounded-full hover:bg-space-500;
+  }
+
+  ::-webkit-scrollbar-corner {
+    @apply bg-space-900;
+  }
+
+  /* Focus visible */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-accent-cyan ring-offset-2 ring-offset-space-950;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent-cyan text-space-950 hover:bg-accent-cyan/90 active:bg-accent-cyan focus-visible:ring-accent-cyan;
+  }
+
+  .btn-secondary {
+    @apply btn bg-space-700 text-space-100 hover:bg-space-600 active:bg-space-500 focus-visible:ring-space-500 border border-space-600;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-space-300 hover:bg-space-800 active:bg-space-700 focus-visible:ring-space-500;
+  }
+
+  .btn-danger {
+    @apply btn bg-accent-rose/10 text-accent-rose hover:bg-accent-rose/20 active:bg-accent-rose/30 focus-visible:ring-accent-rose border border-accent-rose/30;
+  }
+
+  .input {
+    @apply w-full px-4 py-2.5 bg-space-800/50 border border-space-600 rounded-lg text-space-50 placeholder-space-500 transition-all duration-200 focus:border-accent-cyan focus:ring-2 focus:ring-accent-cyan/20 focus:outline-none;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-space-300 mb-1.5;
+  }
+
+  .card {
+    @apply bg-space-900/80 backdrop-blur-sm border border-space-700 rounded-xl overflow-hidden transition-all duration-300 hover:border-space-600;
+  }
+
+  .card-elevated {
+    @apply card shadow-xl shadow-space-950/50;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-info {
+    @apply badge bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20;
+  }
+
+  .badge-success {
+    @apply badge bg-accent-emerald/10 text-accent-emerald border border-accent-emerald/20;
+  }
+
+  .badge-warning {
+    @apply badge bg-accent-amber/10 text-accent-amber border border-accent-amber/20;
+  }
+
+  .badge-danger {
+    @apply badge bg-accent-rose/10 text-accent-rose border border-accent-rose/20;
+  }
+
+  .section-title {
+    @apply text-lg font-display font-semibold text-space-100 flex items-center gap-2;
+  }
+
+  .page-container {
+    @apply min-h-screen bg-space-950;
+  }
+
+  .glass-panel {
+    @apply bg-space-900/60 backdrop-blur-md border border-space-700/50 rounded-xl;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .bg-radial-gradient {
+    background: radial-gradient(ellipse at center, var(--bg-secondary) 0%, var(--bg-primary) 70%);
+  }
+}

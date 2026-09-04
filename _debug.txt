@@ -1,0 +1,3 @@
+"ఉంటుంది',\n      openAssistant: 'AI అసిస్టెంట్ తెరవండి',\n      mapComingSoon: 'మ్యాప్ వీక్షణ త్వరలో వస్తుంది',\n      mapDesc: 'ప్రాజెక్ట్ చిత్రాల భౌగోళిక వీక్షణ త్వరలో అందుబాటులో ఉంటుంది',\n    },\n  },\n"
+Ends with }: False
+Has export function: False

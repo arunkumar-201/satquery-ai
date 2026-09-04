@@ -1,0 +1,36 @@
+
+> satquery-ai@1.0.0 dev
+> vite
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m341[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5179[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.[2m10:01:06 am[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/auth/me[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1194:18)
+    at afterConnectMultiple (node:net:1784:7)
+[2m10:26:53 am[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/auth/login[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1194:18)
+    at afterConnectMultiple (node:net:1784:7)
+[2m12:56:39 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/components/Navbar.jsx[22m
+[2m12:56:58 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/components/Navbar.jsx[22m
+[2m12:57:49 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/components/Navbar.jsx[22m
+[2m12:58:38 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/Analysis.jsx[22m
+[2m12:59:04 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/Analysis.jsx[22m
+[2m1:00:09 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/Analysis.jsx[22m
+[2m1:01:50 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/Analysis.jsx[22m
+[2m1:03:56 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/utils/translations.js[22m
+[2m1:23:58 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/Analysis.jsx[22m
+[2m4:32:00 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/Analysis.jsx[22m
+[2m8:17:45 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/components/ImageUploader.jsx[22m
+[2m5:19:00 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/utils/translations.js[22m
+[2m5:19:54 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/utils/translations.js[22m
+[2m6:20:58 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/utils/translations.js[22m
