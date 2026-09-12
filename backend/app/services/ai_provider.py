@@ -156,7 +156,7 @@ class GeminiProvider(AIProvider):
 
     def __init__(self, api_key: str = None, model: str = None):
         self.api_key = api_key
-        self.model = model or "gemini-1.5-flash"
+        self.model = model or "gemini-3.5-flash-lite"
 
     async def _generate(self, parts: List[Dict[str, Any]]) -> str:
         if not self.api_key:
@@ -182,12 +182,10 @@ class GeminiProvider(AIProvider):
                     # Check for rate limit (429) or server errors (5xx)
                     if response.status_code == 429:
                         if attempt < max_retries - 1:
-                            # Exponential backoff with jitter
                             delay = base_delay * (2 ** attempt) + random.uniform(0, 1)
                             print(f"Rate limited (429), retrying in {delay:.2f}s (attempt {attempt + 1}/{max_retries})")
                             await asyncio.sleep(delay)
                             continue
-                        # Last attempt failed
                         response.raise_for_status()
                     elif 500 <= response.status_code < 600:
                         if attempt < max_retries - 1:
@@ -196,6 +194,16 @@ class GeminiProvider(AIProvider):
                             await asyncio.sleep(delay)
                             continue
                         response.raise_for_status()
+
+                    if response.status_code in (401, 403):
+                        error_detail = ""
+                        try:
+                            error_detail = response.json().get("error", {}).get("message", "")
+                        except Exception:
+                            pass
+                        raise RuntimeError(
+                            f"Gemini API authentication error ({response.status_code}): {error_detail or response.text}"
+                        )
 
                     response.raise_for_status()
                     data = response.json()
@@ -206,12 +214,19 @@ class GeminiProvider(AIProvider):
                         raise RuntimeError("Gemini returned no usable response") from exc
 
             except httpx.HTTPStatusError as e:
+                error_detail = ""
+                try:
+                    error_detail = e.response.json().get("error", {}).get("message", "")
+                except Exception:
+                    pass
                 if attempt < max_retries - 1 and e.response.status_code in (429, 500, 502, 503, 504):
                     delay = base_delay * (2 ** attempt) + random.uniform(0, 1)
                     print(f"HTTP error ({e.response.status_code}), retrying in {delay:.2f}s (attempt {attempt + 1}/{max_retries})")
                     await asyncio.sleep(delay)
                     continue
-                raise
+                raise RuntimeError(
+                    f"Gemini API error ({e.response.status_code}): {error_detail or str(e)}"
+                ) from e
             except (httpx.RequestError, asyncio.TimeoutError) as e:
                 if attempt < max_retries - 1:
                     delay = base_delay * (2 ** attempt) + random.uniform(0, 1)

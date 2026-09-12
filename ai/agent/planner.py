@@ -65,9 +65,49 @@ async def execute_plan(
     provider,
     language: str = "en",
 ) -> Dict[str, Any]:
-    """Execute the analysis plan using the AI provider."""
+    """Execute the analysis plan using the AI provider with automatic graceful fallback."""
     steps = plan.get("steps", [])
     intent = plan.get("intent", "GENERAL")
+
+    active_provider = provider
+    is_fallback = provider.name == "demo"
+    fallback_reason = None
+
+    async def _analyze_safe(paths: List[str], prompt: str) -> str:
+        nonlocal active_provider, is_fallback, fallback_reason
+        try:
+            return await active_provider.analyze_image(paths, prompt)
+        except Exception as exc:
+            import logging
+            logging.getLogger("satquery.ai").warning(
+                "AI provider %s failed: %s. Falling back to DemoProvider.",
+                getattr(active_provider, "name", "unknown"),
+                exc,
+            )
+            from app.services.ai_provider import DemoProvider
+            active_provider = DemoProvider()
+            is_fallback = True
+            fallback_reason = str(exc)
+            demo_resp = await active_provider.analyze_image(paths, prompt)
+            return f"[AI Provider Notice: {exc}. Operating in local fallback mode]\n\n{demo_resp}"
+
+    async def _chat_safe(messages: List[Dict[str, str]]) -> str:
+        nonlocal active_provider, is_fallback, fallback_reason
+        try:
+            return await active_provider.chat(messages)
+        except Exception as exc:
+            import logging
+            logging.getLogger("satquery.ai").warning(
+                "AI provider %s failed: %s. Falling back to DemoProvider.",
+                getattr(active_provider, "name", "unknown"),
+                exc,
+            )
+            from app.services.ai_provider import DemoProvider
+            active_provider = DemoProvider()
+            is_fallback = True
+            fallback_reason = str(exc)
+            demo_resp = await active_provider.chat(messages)
+            return f"[AI Provider Notice: {exc}. Operating in local fallback mode]\n\n{demo_resp}"
 
     results = {}
     answer_parts = []
@@ -78,7 +118,7 @@ async def execute_plan(
             idx = plan.get("primary_image_index", 0)
             if idx < len(image_paths):
                 prompt = _build_single_image_prompt(user_query, intent, language)
-                response = await provider.analyze_image([image_paths[idx]], prompt)
+                response = await _analyze_safe([image_paths[idx]], prompt)
                 results["analysis"] = response
                 answer_parts.append(response)
 
@@ -86,7 +126,7 @@ async def execute_plan(
             idx = plan.get("primary_image_index", 0)
             if idx < len(image_paths):
                 prompt = _build_detection_prompt(user_query, language)
-                response = await provider.analyze_image([image_paths[idx]], prompt)
+                response = await _analyze_safe([image_paths[idx]], prompt)
                 # Try to extract structured detections if provider returned JSON
                 try:
                     import json
@@ -123,7 +163,7 @@ async def execute_plan(
             idx2 = plan.get("secondary_image_index", 1)
             if idx1 < len(image_paths) and idx2 < len(image_paths):
                 prompt = _build_change_detection_prompt(user_query, language)
-                response = await provider.analyze_image([image_paths[idx1], image_paths[idx2]], prompt)
+                response = await _analyze_safe([image_paths[idx1], image_paths[idx2]], prompt)
                 results["change_analysis"] = response
                 answer_parts.append(response)
 
@@ -139,13 +179,13 @@ async def execute_plan(
             idx = 0 if step == "analyze_optical" else 1
             if idx < len(image_paths):
                 prompt = _build_single_image_prompt(user_query, "IMAGE_ANALYSIS", language)
-                response = await provider.analyze_image([image_paths[idx]], prompt)
+                response = await _analyze_safe([image_paths[idx]], prompt)
                 results[f"{step}_result"] = response
 
         elif step == "fuse_results":
             # Combine the optical and SAR analyses
             prompt = _build_fusion_prompt(results.get("analyze_optical_result", ""), results.get("analyze_sar_result", ""), user_query, language)
-            response = await provider.chat([{"role": "user", "content": prompt}])
+            response = await _chat_safe([{"role": "user", "content": prompt}])
             results["fusion"] = response
             answer_parts.append(response)
 
@@ -158,19 +198,20 @@ async def execute_plan(
             prompts = []
             for i, path in enumerate(image_paths):
                 prompt = _build_single_image_prompt(user_query, "MULTITEMPORAL_ANALYSIS", language)
-                response = await provider.analyze_image([path], prompt)
+                response = await _analyze_safe([path], prompt)
                 prompts.append(f"Image {i+1}: {response}")
             final_prompt = f"Based on these temporal analyses:\n{chr(10).join(prompts)}\nAnswer: {user_query}"
-            response = await provider.chat([{"role": "user", "content": final_prompt}])
+            response = await _chat_safe([{"role": "user", "content": final_prompt}])
             results["temporal"] = response
             answer_parts.append(response)
 
     metadata = {
-        "model": getattr(provider, "model", None),
-        "provider": provider.name,
-        "is_fallback": provider.name == "demo",
+        "model": getattr(active_provider, "model", None),
+        "provider": active_provider.name,
+        "is_fallback": is_fallback,
+        "fallback_reason": fallback_reason,
     }
-    if provider.name == "demo" and image_paths:
+    if is_fallback and image_paths:
         from ai.preprocessing.image_preprocessor import preprocess_image
         try:
             image, image_metadata = preprocess_image(image_paths[0])

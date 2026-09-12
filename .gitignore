@@ -1,1 +1,53 @@
-backend/.venv/ 
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+
+# Runtime logs
+*.log
+
+# Uploaded/generated files
+storage/uploads/*
+backend/storage/uploads/*
+storage/evidence/*
+backend/storage/evidence/*
+
+# Browser test profiles
+.chrome-upload-test/
+.chrome-upload-test-direct/
+.chrome-upload-test-direct2/
+
+# Build output
+frontend/dist/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary/debug
+_debug.txt
+# Local duplicate/temporary project folders
+/app/
+/satquery-ai/

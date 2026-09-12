@@ -38,7 +38,14 @@ def register(db: Session, name: str, email: str, password: str):
 
 
 def authenticate(db: Session, email: str, password: str) -> User:
-    user = db.query(User).filter(User.email == email).first()
+    identifier = email.strip()
+    user = (
+        db.query(User)
+        .filter(
+            (User.email.ilike(identifier)) | (User.name.ilike(identifier))
+        )
+        .first()
+    )
     if not user or not verify_password(password, user.password_hash):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
     return user

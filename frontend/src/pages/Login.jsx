@@ -73,18 +73,18 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-space-300 mb-1.5">
-                {t('login.email', language)}
+                {t('login.email', language)} / Username
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-space-500" aria-hidden="true" />
                 <input
                   id="email"
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="input pl-10 pr-4 py-2.5"
-                  placeholder="user@example.com"
-                  autoComplete="email"
+                  placeholder="demo@satquery.ai or username"
+                  autoComplete="username"
                   required
                   aria-required="true"
                   disabled={loading}
@@ -162,11 +162,25 @@ export default function Login() {
               </button>
             </p>
           </div>
+
+          <div className="mt-4 pt-4 border-t border-space-800 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('demo@satquery.ai')
+                setPassword('demopassword123')
+                setError('')
+              }}
+              className="text-xs text-accent-cyan hover:text-accent-cyan/80 transition-colors inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-cyan/10 border border-accent-cyan/20 hover:bg-accent-cyan/20 cursor-pointer"
+            >
+              <span>Auto-fill Demo Account (demo@satquery.ai)</span>
+            </button>
+          </div>
         </div>
 
         {/* Demo Notice */}
-        <div className="mt-6 text-center text-xs text-space-600">
-          <p>{t('login.demoNotice', language)}</p>
+        <div className="mt-4 text-center text-xs text-space-500">
+          <p>Demo: <code className="text-accent-cyan">demo@satquery.ai</code> / <code className="text-accent-cyan">demopassword123</code></p>
         </div>
       </div>
     </div>

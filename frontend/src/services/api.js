@@ -32,6 +32,12 @@ api.interceptors.response.use(
     const detail = error.response?.data?.detail
     if (typeof detail === 'string') {
       error.message = detail
+    } else if (Array.isArray(detail) && detail.length > 0) {
+      error.message = detail
+        .map((d) => d.msg || (typeof d === 'string' ? d : JSON.stringify(d)))
+        .join(', ')
+    } else if (detail && typeof detail === 'object') {
+      error.message = detail.msg || JSON.stringify(detail)
     }
     return Promise.reject(error)
   }

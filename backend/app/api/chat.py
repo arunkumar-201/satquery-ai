@@ -108,7 +108,12 @@ async def process_query(data: QueryRequest, current_user: User = Depends(get_cur
         raise
     except Exception as exc:
         db.rollback()
-        raise HTTPException(status_code=502, detail="AI analysis is unavailable; check the provider configuration") from exc
+        import logging
+        logging.getLogger("satquery.api").exception("AI analysis execution failed: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail=f"AI analysis is unavailable: {exc}"
+        ) from exc
 
     # Update analysis with query_id
     analysis.query_id = user_msg.id
