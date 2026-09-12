@@ -30,18 +30,14 @@ RUN npm run build
 # ============================================================
 FROM nginx:alpine AS runner
 
-# Copy custom nginx config for SPA routing
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx config template
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Copy built assets from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port
-EXPOSE 5173
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:5173/ || exit 1
+# Render will provide PORT; locally defaults to 5173
+ENV PORT=5173
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
